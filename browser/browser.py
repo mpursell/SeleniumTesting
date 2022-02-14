@@ -8,6 +8,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
 
 load_dotenv()
 
@@ -16,14 +17,27 @@ class Page:
     """Class to create a page object given a url"""
 
     def __init__(self, url: str):
-        self._url = url
+
+        if url == "":
+            raise PageError("No url or url empty")
+        else:
+            self._url = url
+
         binary_location = os.environ.get("BINARY_LOCATION")
+
+        if binary_location == None:
+            raise PageError("Environmental vars possibly not loaded")
 
         options = Options()
         options.headless = False
-        options.binary_location = fr"{binary_location}"
+        options.binary_location = rf"{binary_location}"
         self._driver = webdriver.Firefox(options=options)
         self._driver.get(f"{self._url}")
+
+
+class PageError(Exception):
+    def __init__(self, message):
+        self._message = message
 
 
 class SeleniumPage(Page):
@@ -65,17 +79,28 @@ class WikipediaPage(Page):
             EC.presence_of_element_located((By.ID, "toc"))
         )
 
-        required_link = new_page.find_element(by="partial link text", value="Biography")
-        required_link.click()
+        try:
+            required_link = new_page.find_element(
+                by="partial link text", value="Biography"
+            )
+            required_link.click()
+
+        except NoSuchElementException:
+            required_link = new_page.find_element(by="partial link text", value="Life")
+            required_link.click()
+
+        paragraph = WebDriverWait(self._driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "mw-headline"))
+        )
 
 
-def refactored_selenium_website():
+def selenium_website_clicking():
 
     page = SeleniumPage("https://www.selenium.dev/documentation/webdriver/")
     page.doSomeClickingAndRefreshing()
 
 
-def refactored_wikipedia_famous_people_biography(searchText: str):
+def wikipedia_famous_people_biography(searchText: str):
 
     page = WikipediaPage("https://www.wikipedia.org/")
     page.biographySearch(f"{searchText}")
@@ -83,8 +108,8 @@ def refactored_wikipedia_famous_people_biography(searchText: str):
 
 def main():
 
-    refactored_selenium_website()
-    refactored_wikipedia_famous_people_biography("Ada Lovelace")
+    # selenium_website_clicking()
+    wikipedia_famous_people_biography("Shakespeare")
 
 
 if __name__ == "__main__":
