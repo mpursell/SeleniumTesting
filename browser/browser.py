@@ -9,72 +9,79 @@ from selenium.webdriver.common.by import By
 
 
 binarylocation = os.environ.get("BINARY_LOCATION")
-
 print(binarylocation)
 
-options = Options()
-options.headless = False
-options.binary_location = r"/home/mike/firefox/firefox"
-driver = webdriver.Firefox(options=options)
+
+class Page():
+    """Class to create a page object given a url"""
+
+    def __init__(self, url: str):
+        self._url = url
+
+        options = Options()
+        options.headless = False
+        options.binary_location = r"/home/mike/firefox/firefox"
+        self._driver = webdriver.Firefox(options=options)
+        self._driver.get(f"{self._url}")
+
+class SeleniumPage(Page):
+
+    def doSomeClickingAndRefreshing(self):
+
+        browser_link = self._driver.find_element_by_link_text("Browser")
+        WebDriverWait(self._driver, timeout=3)
+
+        browser_link.click()
+        support_button = self._driver.find_element_by_class_name("selenium-button-container")
+        WebDriverWait(self._driver, timeout=3)
+
+        support_button.click()
+
+        i = 1
+        while i < 4:
+            self._driver.refresh()
+            WebDriverWait(self._driver, timeout=10)
+            i += 1
+
+class WikipediaPage(Page):
+
+    def biographySearch(self, personName: str) -> object:
+        """Searches a person on Wikipedia, chooses the first option
+        from the drop-down suggestion menu, and jumps to the biography
+        section"""
+
+        search_box = self._driver.find_element(by="name", value="search")
+        search_box.send_keys(f"{personName}")
+
+        WebDriverWait(self._driver, timeout=5)
+
+        ActionChains(self._driver).key_down(Keys.CONTROL).send_keys(
+            Keys.RETURN
+        ).perform()
+        new_page = WebDriverWait(self._driver, 10).until(
+            EC.presence_of_element_located((By.ID, "toc"))
+        )
+
+        required_link = new_page.find_element(by="partial link text", value="Biography")
+        required_link.click()
 
 
-def selenium_website():
-    """Some basic clicking on the selenium website"""
 
-    driver.get("https://www.selenium.dev/documentation/webdriver/")
+def refactored_selenium_website():
 
-    browser_link = driver.find_element_by_link_text("Browser")
+    page = SeleniumPage("https://www.selenium.dev/documentation/webdriver/")
+    page.doSomeClickingAndRefreshing()
 
-    WebDriverWait(driver, timeout=3)
+def refactored_wikipedia_famous_people_biography(searchText: str):
 
-    browser_link.click()
+    page = WikipediaPage("https://www.wikipedia.org/")
+    page.biographySearch(f"{searchText}")
 
-    support_button = driver.find_element_by_class_name("selenium-button-container")
-
-    WebDriverWait(driver, timeout=3)
-
-    support_button.click()
-
-    i = 1
-    while i < 2:
-        driver.refresh()
-        WebDriverWait(driver, timeout=10)
-
-
-def wikipedia_famous_people_biography(searchText: str):
-    """Searches a person on Wikipedia, chooses the first option
-    from the drop-down suggestion menu, and jumps to the biography
-    section"""
-
-
-    driver.get("https://www.wikipedia.org/")
-    search_box = driver.find_element(by="name", value="search")
-    search_box.send_keys(f"{searchText}")
-
-    WebDriverWait(driver, timeout=5)
-    
-    ActionChains(driver).key_down(Keys.CONTROL).send_keys(Keys.RETURN).perform()
-
-    # Once the table of contents has loaded, we're on the new page
-    new_page = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "toc")))
-
-    ## Loop to iterate over all links and find the one we want
-
-    # find all the hyperlink elements on the page
-    # links_on_page = new_page.find_elements(by="css selector", value="a")
-
-    # for link in links_on_page:
-    #     if "Biography" in link.text:
-    #         link.click()
-
-    ## Find the link directly and action
-    required_link = new_page.find_element(by="partial link text", value="Biography")
-    required_link.click()
-        
 
 def main():
-    # selenium_website()
-    wikipedia_famous_people_biography("John Donne")
+
+    refactored_selenium_website()
+    refactored_wikipedia_famous_people_biography("Ada Lovelace")
 
 
 if __name__ == "__main__":
