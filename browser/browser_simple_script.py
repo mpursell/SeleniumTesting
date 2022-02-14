@@ -35,7 +35,7 @@ def selenium_website():
     while i < 4:
         driver.refresh()
         WebDriverWait(driver, timeout=10)
-        i = i+1
+        i = i + 1
 
 
 def wikipedia_famous_people_biography(searchText: str):
