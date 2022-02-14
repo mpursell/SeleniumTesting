@@ -1,4 +1,6 @@
 import os
+from dotenv import load_dotenv
+
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
@@ -7,9 +9,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
-
-binarylocation = os.environ.get("BINARY_LOCATION")
-print(binarylocation)
+load_dotenv()
 
 
 class Page:
@@ -17,10 +17,11 @@ class Page:
 
     def __init__(self, url: str):
         self._url = url
+        binary_location = os.environ.get("BINARY_LOCATION")
 
         options = Options()
         options.headless = False
-        options.binary_location = r"/home/mike/firefox/firefox"
+        options.binary_location = fr"{binary_location}"
         self._driver = webdriver.Firefox(options=options)
         self._driver.get(f"{self._url}")
 
