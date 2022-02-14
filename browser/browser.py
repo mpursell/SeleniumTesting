@@ -12,7 +12,7 @@ binarylocation = os.environ.get("BINARY_LOCATION")
 print(binarylocation)
 
 
-class Page():
+class Page:
     """Class to create a page object given a url"""
 
     def __init__(self, url: str):
@@ -24,15 +24,17 @@ class Page():
         self._driver = webdriver.Firefox(options=options)
         self._driver.get(f"{self._url}")
 
-class SeleniumPage(Page):
 
+class SeleniumPage(Page):
     def doSomeClickingAndRefreshing(self):
 
         browser_link = self._driver.find_element_by_link_text("Browser")
         WebDriverWait(self._driver, timeout=3)
 
         browser_link.click()
-        support_button = self._driver.find_element_by_class_name("selenium-button-container")
+        support_button = self._driver.find_element_by_class_name(
+            "selenium-button-container"
+        )
         WebDriverWait(self._driver, timeout=3)
 
         support_button.click()
@@ -43,8 +45,8 @@ class SeleniumPage(Page):
             WebDriverWait(self._driver, timeout=10)
             i += 1
 
-class WikipediaPage(Page):
 
+class WikipediaPage(Page):
     def biographySearch(self, personName: str) -> object:
         """Searches a person on Wikipedia, chooses the first option
         from the drop-down suggestion menu, and jumps to the biography
@@ -66,11 +68,11 @@ class WikipediaPage(Page):
         required_link.click()
 
 
-
 def refactored_selenium_website():
 
     page = SeleniumPage("https://www.selenium.dev/documentation/webdriver/")
     page.doSomeClickingAndRefreshing()
+
 
 def refactored_wikipedia_famous_people_biography(searchText: str):
 
