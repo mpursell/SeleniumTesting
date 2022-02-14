@@ -5,8 +5,9 @@
 
 Requires the browser binary location setting in browser/browser.py
 
-Requires the geckodriver location to be $PATH
+Requires the geckodriver location to be in $PATH
 
 ## Scripts
 
-OOP approach in browser.py, simple script workup in browser_simple_script.py
+* OOP approach in browser.py 
+* simple script workup in browser_simple_script.py
