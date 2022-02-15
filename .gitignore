@@ -4,5 +4,8 @@
 # log files
 *.log
 
+# VSCode
+settings.json
+
 
 

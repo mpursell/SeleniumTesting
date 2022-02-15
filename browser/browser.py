@@ -16,8 +16,9 @@ load_dotenv()
 class Page:
     """Class to create a page object given a url"""
 
-    def __init__(self, url: str):
+    def __init__(self, url: str, headless=True):
 
+        self._headless = headless
         if url == "":
             raise PageError("No url or url empty")
         else:
@@ -29,7 +30,7 @@ class Page:
             raise PageError("Environmental vars possibly not loaded")
 
         options = Options()
-        options.headless = False
+        options.headless = self._headless
         options.binary_location = rf"{binary_location}"
         self._driver = webdriver.Firefox(options=options)
         self._driver.get(f"{self._url}")
@@ -96,13 +97,13 @@ class WikipediaPage(Page):
 
 def selenium_website_clicking():
 
-    page = SeleniumPage("https://www.selenium.dev/documentation/webdriver/")
+    page = SeleniumPage("https://www.selenium.dev/documentation/webdriver/", headless=False)
     page.doSomeClickingAndRefreshing()
 
 
 def wikipedia_famous_people_biography(searchText: str):
 
-    page = WikipediaPage("https://www.wikipedia.org/")
+    page = WikipediaPage("https://www.wikipedia.org/", headless=False)
     page.biographySearch(f"{searchText}")
 
 

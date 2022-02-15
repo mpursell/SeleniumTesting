@@ -1,5 +1,5 @@
 import pytest
-from browser.browser import Page
+from browser.browser import *
 
 def test_Page():
     
