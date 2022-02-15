@@ -8,6 +8,7 @@ authors = ["Mike <michael.pursell@gmail.com>"]
 python = "^3.9"
 selenium = "^4.1.0"
 python-dotenv = "^0.19.2"
+pytest = "^7.0.1"
 
 [tool.poetry.dev-dependencies]
 
